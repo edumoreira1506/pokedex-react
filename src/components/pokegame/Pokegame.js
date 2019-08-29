@@ -1,23 +1,33 @@
 import React, { Component } from 'react'
 import Pokedex from './../pokedex/Pokedex'
 
+import Pokemon from './../../services/Pokemon'
+
 export default class Pokegame extends Component {
-  static defaultProps = {
-    pokemons: [
-      { id: 4, name: 'Charmander', type: 'fire', base_experience: 62 },
-      { id: 7, name: 'Squirtle', type: 'water', base_experience: 63 },
-      { id: 11, name: 'Metapod', type: 'bug', base_experience: 72 },
-      { id: 12, name: 'Butterfree', type: 'flying', base_experience: 178 },
-      { id: 25, name: 'Pikachu', type: 'eletric', base_experience: 112 },
-      { id: 39, name: 'Jigglypuff', type: 'normal', base_experience: 95 },
-      { id: 94, name: 'Gengar', type: 'poison', base_experience: 225 },
-      { id: 133, name: 'Eevee', type: 'normal', base_experience: 65 }
-    ]
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      pokemons: []
+    }
+
+    Pokemon.all().then(result => {
+      const pokemons = result.map((pokemon, index) => {
+          return {
+            name: pokemon.name,
+            id: index + 1,
+            xp: Math.floor(Math.random() * 150 + 1)
+          }
+        }
+      )
+
+      this.setState({ pokemons })
+    })
   }
 
   render() {
     const hand1 = []
-    const hand2 = [...this.props.pokemons]
+    const hand2 = [...this.state.pokemons]
 
     while(hand1.length < hand2.length) {
       const randomIndex = Math.floor(Math.random() * hand2.length)
@@ -25,8 +35,8 @@ export default class Pokegame extends Component {
       hand1.push(randomPokemon)
     }
 
-    const xp1 = hand1.reduce((exp, pokemon) => exp + pokemon.base_experience, 0)
-    const xp2 = hand2.reduce((exp, pokemon) => exp + pokemon.base_experience, 0)
+    const xp1 = hand1.reduce((exp, pokemon) => exp + pokemon.xp, 0)
+    const xp2 = hand2.reduce((exp, pokemon) => exp + pokemon.xp, 0)
 
     return (
       <div>
